@@ -19,33 +19,27 @@ abstract class AiService {
   );
 
   static Future<String?> getMealData(String mealTranscription) async {
-    return _lastResult ??
-        await () async {
-          final chat = _model.startChat(history: _curatedHistory);
-          print(mealTranscription);
-          final content = Content.text(mealTranscription);
+    return await () async {
+      final chat = _model.startChat(history: _curatedHistory);
+      final content = Content.text(mealTranscription);
 
-          final response = await chat.sendMessage(content);
-          print(response.text);
-          _lastResult = response.text;
-          return response.text;
-        }();
+      final response = await chat.sendMessage(content);
+      _lastResult = response.text;
+      return response.text;
+    }();
   }
 
   static Future<String?> getRequirements() async {
-    return _lastResult ??
-        await () async {
-          final chat = _model.startChat(history: _curatedHistory);
-          final message =
-              'totals for ${User(goal: Goal.weightLoss, gender: Gender.male, exercise: Exercise.light).toJson()}';
-          print(message);
-          final content = Content.text(message);
+    return await () async {
+      final chat = _model.startChat(history: _curatedHistory);
+      final message =
+          'totals for ${User(goal: Goal.weightLoss, gender: Gender.male, exercise: Exercise.light).toJson()}';
+      final content = Content.text(message);
 
-          final response = await chat.sendMessage(content);
-          print(response.text);
-          _lastResult = response.text;
-          return response.text;
-        }();
+      final response = await chat.sendMessage(content);
+      _lastResult = response.text;
+      return response.text;
+    }();
   }
 
   static const _systemInstructions =

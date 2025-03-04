@@ -62,11 +62,6 @@ class Nutrition {
   }
 
   @override
-  String toString() {
-    return 'Nutrition(basic: $basic, vitamins: $vitamins, minerals: $minerals)';
-  }
-
-  @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
