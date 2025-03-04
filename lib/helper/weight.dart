@@ -3,7 +3,7 @@ String getWeightAsMetricClosesUnits(double grams) {
     return '${grams.toStringAsFixed(2)} g';
   } else if (grams >= 1000) {
     return '${(grams / 1000).toStringAsFixed(2)} kg';
-  } else if (grams >= 1) {
+  } else if (grams >= 0.1) {
     return '${grams.toStringAsFixed(2)} g';
   } else if (grams >= 0.001) {
     return '${(grams * 1000).toStringAsFixed(2)} mg';
