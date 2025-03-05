@@ -4,6 +4,7 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 
 abstract class AiService {
   static String? _lastResult;
+  static String? _lastResult2;
 
   static final _model = GenerativeModel(
     model: 'gemini-2.0-flash-lite',
@@ -19,27 +20,28 @@ abstract class AiService {
   );
 
   static Future<String?> getMealData(String mealTranscription) async {
-    return await () async {
-      final chat = _model.startChat(history: _curatedHistory);
-      final content = Content.text(mealTranscription);
+    return _lastResult ??
+        await () async {
+          final chat = _model.startChat(history: _curatedHistory);
+          final content = Content.text(mealTranscription);
 
-      final response = await chat.sendMessage(content);
-      _lastResult = response.text;
-      return response.text;
-    }();
+          final response = await chat.sendMessage(content);
+          _lastResult = response.text;
+          return response.text;
+        }();
   }
 
-  static Future<String?> getRequirements() async {
-    return await () async {
-      final chat = _model.startChat(history: _curatedHistory);
-      final message =
-          'totals for ${User(goal: Goal.weightLoss, gender: Gender.male, exercise: Exercise.light).toJson()}';
-      final content = Content.text(message);
+  static Future<String?> getRequirements(User user) async {
+    return _lastResult2 ??
+        await () async {
+          final chat = _model.startChat(history: _curatedHistory);
+          final message = 'totals for $user';
+          final content = Content.text(message);
 
-      final response = await chat.sendMessage(content);
-      _lastResult = response.text;
-      return response.text;
-    }();
+          final response = await chat.sendMessage(content);
+          _lastResult = response.text;
+          return response.text;
+        }();
   }
 
   static const _systemInstructions =

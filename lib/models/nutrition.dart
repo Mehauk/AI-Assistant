@@ -37,6 +37,11 @@ class Nutrition {
     return Nutrition(basic: basic, vitamins: vitamins, minerals: minerals);
   }
 
+  String toJson() {
+    final json = {'basic': basic, 'vitamins': vitamins, 'minerals': minerals};
+    return jsonEncode(json);
+  }
+
   Nutrition operator +(Nutrition other) {
     final newBasic = Map<String, double>.from(basic);
     final newVitamins = Map<String, double>.from(vitamins);

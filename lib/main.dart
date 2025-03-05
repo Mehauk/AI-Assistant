@@ -1,5 +1,6 @@
 import 'package:ai_nutritionist/config/theme.dart';
 import 'package:ai_nutritionist/home.dart';
+import 'package:ai_nutritionist/settings.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -20,18 +21,6 @@ class MyApp extends StatelessWidget {
         '/': (context) => const HomePage(),
         '/settings': (context) => const SettingsPage(),
       },
-    );
-  }
-}
-
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Settings Page')),
-      body: const Center(child: Text('Welcome to the Settings Page!')),
     );
   }
 }
