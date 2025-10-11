@@ -4,6 +4,7 @@ import 'package:ai_nutritionist/models/nutrition.dart';
 import 'package:ai_nutritionist/models/user.dart';
 import 'package:ai_nutritionist/obervers/observers.dart';
 import 'package:ai_nutritionist/ui/nutrition_panel.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final DateTime today = DateTime.now();
   final SpeechToText _speechToText = SpeechToText();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   Nutrition? totalNutrition;
   Nutrition? currentNutrition;
   Nutrition? lastNutrtion;
@@ -27,6 +29,7 @@ class HomePageState extends State<HomePage> {
   bool _isLoad = true;
   String _lastWords = '';
   User user = User();
+  List<String> recentFoods = [];
 
   @override
   void initState() {
@@ -38,6 +41,7 @@ class HomePageState extends State<HomePage> {
   @override
   void dispose() {
     userObserver.removeCallback(updateUser);
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -71,8 +75,9 @@ class HomePageState extends State<HomePage> {
     setState(() => _isLoad = false);
   }
 
-  void _onSpeechStatus(String status) {
+  void _onSpeechStatus(String status) async {
     if (status == 'done') {
+      await _audioPlayer.play(AssetSource('audio/beep.mp3'));
       setState(() {
         _isLoad = true;
         _lastWords = _speechToText.lastRecognizedWords;
@@ -103,6 +108,8 @@ class HomePageState extends State<HomePage> {
 
   /// Each time to start a speech recognition session
   void _startListening() async {
+    if (_lastWords != '') recentFoods.add(_lastWords);
+    await _audioPlayer.play(AssetSource('audio/beep.mp3'));
     await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {});
   }
@@ -111,7 +118,9 @@ class HomePageState extends State<HomePage> {
   /// Note that there are also timeouts that each platform enforces
   /// and the SpeechToText plugin supports setting timeouts on the
   /// listen method.
-  void _stopListening() async => await _speechToText.stop();
+  void _stopListening() async {
+    await _speechToText.stop();
+  }
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
@@ -216,11 +225,23 @@ class HomePageState extends State<HomePage> {
                       )
                       : const SizedBox(),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Last food: $_lastWords',
-                style: Theme.of(context).textTheme.titleLarge,
+            SizedBox(
+              height: 150,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Recents:',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 4),
+                      ...recentFoods.map((t) => Text("- $t")),
+                      Text("- $_lastWords"),
+                    ],
+                  ),
+                ),
               ),
             ),
             if (!_speechEnabled) Text('Need mic permission!'),
@@ -230,7 +251,6 @@ class HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed:
-            // If not yet listening for speech start, otherwise stop
             _speechToText.isNotListening ? _startListening : _stopListening,
         tooltip: 'Listen',
         child: Icon(_speechToText.isNotListening ? Icons.mic_off : Icons.mic),

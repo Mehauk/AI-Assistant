@@ -69,8 +69,10 @@ class NutrionPanelTrack extends StatelessWidget {
         (totalNutritionEntry.key == "calories")
             ? (lastNutritionValue.round().toString(), '')
             : getWeightAsMetricClosesUnits(lastNutritionValue);
+    double stop0 = (lastNutritionValue) / (totalNutritionEntry.value);
     double stop = (currentNutritionValue) / (totalNutritionEntry.value);
-    if (!stop.isFinite) stop = 0.005;
+    if (!stop0.isFinite) stop0 = 0.001;
+    if (!stop.isFinite) stop = 0.007 + stop0;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: DecoratedBox(
@@ -78,12 +80,14 @@ class NutrionPanelTrack extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
             colors: [
+              Colors.amber,
+              Colors.amber,
               Colors.deepPurple,
               Colors.deepPurple,
               darkColorScheme.surfaceBright,
               darkColorScheme.surfaceBright,
             ],
-            stops: [0.005, stop, stop, 1],
+            stops: [0.001, stop0, stop0 + 0.007, stop, stop, 1],
           ),
         ),
         child: Padding(

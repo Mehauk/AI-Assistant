@@ -38,7 +38,9 @@ class Nutrition {
   }
 
   String toJson() {
-    final json = {'basic': basic, 'vitamins': vitamins, 'minerals': minerals};
+    final Map json = basic;
+    json['vitamins'] = vitamins;
+    json['minerals'] = minerals;
     return jsonEncode(json);
   }
 
