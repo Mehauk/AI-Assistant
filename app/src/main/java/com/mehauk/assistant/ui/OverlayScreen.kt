@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,7 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.model.rememberMarkdownState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -48,14 +52,30 @@ fun OverlayScreen(onClose: () -> Unit) {
         label = "scrim"
     )
 
+    val markdownState = rememberMarkdownState(
+    """
+    # Hello Markdown
+
+    This is a simple markdown example with:
+
+    - Bullet points
+    - **Bold text**
+    - *Italic text*
+    `and code`
+    
+    ```
+    code block
+    ```
+
+    [Check out this link](https://github.com/mikepenz/multiplatform-markdown-renderer)
+    """.trimIndent())
+
 
     LaunchedEffect(Unit) {
         isVisible = true
     }
 
-    MaterialTheme(
-        colorScheme = darkColorScheme()
-    ) {
+    AppTheme {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,15 +110,16 @@ fun OverlayScreen(onClose: () -> Unit) {
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) { isTallMode = !isTallMode },
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(animatedHeight),
+                            .height(animatedHeight)
+                            .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Tap me to toggle height. Tap outside to close.")
+                        Markdown(markdownState)
                     }
                 }
             }
