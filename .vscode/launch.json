@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Android Debug",
+            "type": "android",
+            "request": "launch",
+            "appSrcRoot": "${workspaceRoot}/app/src/main",
+            "apkFile": "${workspaceRoot}/app/build/outputs/apk/debug/app-debug.apk",
+            "preLaunchTask": "assembleDebug", // Optional: Runs the Gradle task to build the app before launching
+            // "postDebugTask": "cleanUp", // Optional: A cleanup task after debugging
+        }
+    ]
+}
