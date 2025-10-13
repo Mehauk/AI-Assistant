@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.mehauk.nutritionist"
+    namespace = "com.mehauk.assistant"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.mehauk.nutritionist"
+        applicationId = "com.mehauk.assistant"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

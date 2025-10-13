@@ -1,4 +1,4 @@
-package com.mehauk.nutritionist
+package com.mehauk.assistant
 
 import android.content.Intent
 import android.os.Bundle
