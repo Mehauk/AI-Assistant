@@ -52,10 +52,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-
-    implementation(libs.multiplatform.markdown.renderer)
-    implementation(libs.multiplatform.markdown.renderer.m3)
-    implementation(libs.multiplatform.markdown.renderer.android)
+    implementation(libs.androidx.runtime)
+    implementation(libs.androidx.ui.text)
+    implementation(libs.ui.graphics)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

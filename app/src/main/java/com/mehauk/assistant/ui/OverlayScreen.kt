@@ -10,14 +10,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,11 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.mikepenz.markdown.m3.Markdown
-import com.mikepenz.markdown.model.rememberMarkdownState
+import com.mehauk.assistant.models.UniqueStringItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -51,28 +55,21 @@ fun OverlayScreen(onClose: () -> Unit) {
         animationSpec = tween(300),
         label = "scrim"
     )
+    var input by remember { mutableStateOf("") }
 
-    val markdownState = rememberMarkdownState(
-    """
-    # Hello Markdown
+    val listState = rememberLazyListState()
 
-    This is a simple markdown example with:
-
-    - Bullet points
-    - **Bold text**
-    - *Italic text*
-    `and code`
-    
-    ```
-    code block
-    ```
-
-    [Check out this link](https://github.com/mikepenz/multiplatform-markdown-renderer)
-    """.trimIndent())
+    var chatMessages by remember { mutableStateOf(listOf<UniqueStringItem>()) }
 
 
     LaunchedEffect(Unit) {
         isVisible = true
+    }
+
+    LaunchedEffect(chatMessages.size) {
+        if (chatMessages.isNotEmpty()) {
+            listState.animateScrollToItem(chatMessages.size - 1)
+        }
     }
 
     AppTheme {
@@ -106,20 +103,76 @@ fun OverlayScreen(onClose: () -> Unit) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(
+                        .clickable( // Consume clicks to prevent background click-through
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
-                        ) { isTallMode = !isTallMode },
+                        ) { /* do nothing */ },
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(animatedHeight)
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
+                            .padding(16.dp)
                     ) {
-                        Markdown(markdownState)
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            if (!isTallMode) {
+                                MarkdownPreview("""
+                                ## AI Assistant
+                                Type or use voice mode to prompt the assistant.
+                                """.trimIndent())
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(top = 24.dp),
+                                    state = listState
+                                ) {
+                                    items(chatMessages, key = { it.id }) { message ->
+                                        MarkdownPreview("""
+            # Welcome to MyApp
+            ## Second heading
+            
+            Welcome to the **Policy Check** feature of MyAPp. 
+            *This is an italic text example.*
+            [Visit Andra Pradesh Police Website](http://www.appolice.gov.in/)
+            - First bullet point
+            - Second `bullet point`
+            > This is a blockquote example.
+            ```
+            fun helloWorld() {
+                println("Hello, world!")
+            }
+            ```
+            Inline code example: `val x = 10`
+            """.trimIndent())
+                                    }
+                                }
+                            }
+                        }
+                        OutlinedTextField(
+                            value = input,
+                            onValueChange = { input = it },
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            placeholder = { Text("Type a message...") },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+                            keyboardActions = KeyboardActions(
+                                onSend = {
+                                    if (input.isNotBlank()) {
+                                        if (!isTallMode) {
+                                            isTallMode = true
+                                        }
+
+                                        chatMessages = chatMessages + UniqueStringItem(input)
+
+                                        input = ""
+                                    }
+                                }
+                            )
+                        )
                     }
                 }
             }
