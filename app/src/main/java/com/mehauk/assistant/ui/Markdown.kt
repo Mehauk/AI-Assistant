@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
@@ -21,11 +20,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 
 @Composable
 fun MarkdownPreview(text: String) {
-    val context = LocalContext.current
     val annotatedString = parseMarkdownToAnnotatedString(text)
 
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
@@ -41,10 +38,6 @@ fun MarkdownPreview(text: String) {
                     annotatedString
                         .getStringAnnotations(start = position, end = position)
                         .firstOrNull { it.tag == "URL" }
-                        ?.let { annotation ->
-                            val intent = Intent(Intent.ACTION_VIEW, annotation.item.toUri())
-                            context.startActivity(intent)
-                        }
                 }
             },
         onTextLayout = { result ->
@@ -127,6 +120,7 @@ fun parseMarkdownToAnnotatedString(markdown: String): AnnotatedString {
                 builder.addStyle(
                     SpanStyle(
                         background = Color.LightGray,
+                        color = Color(0xFF333333),
                         fontSize = 14.sp,
                         fontFamily = FontFamily.Monospace
                     ),
@@ -200,7 +194,8 @@ fun parseMarkdownToAnnotatedString(markdown: String): AnnotatedString {
                 builder.addStyle(
                     SpanStyle(
                         background = Color(0xFFE0E0E0),
-                        fontStyle = FontStyle.Italic
+                        color = Color(0xFF333333),
+                        fontStyle = FontStyle.Italic,
                     ),
                     styleStart,
                     builder.length
