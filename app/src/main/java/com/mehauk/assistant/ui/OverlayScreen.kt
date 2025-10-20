@@ -131,23 +131,7 @@ fun OverlayScreen(onClose: () -> Unit) {
                                     state = listState
                                 ) {
                                     items(chatMessages, key = { it.id }) { message ->
-                                        MarkdownPreview("""
-            # Welcome to MyApp
-            ## Second heading
-            
-            Welcome to the **Policy Check** feature of MyAPp. 
-            *This is an italic text example.*
-            [Visit Andra Pradesh Police Website](http://www.appolice.gov.in/)
-            - First bullet point
-            - Second `bullet point`
-            > This is a blockquote example.
-            ```
-            fun helloWorld() {
-                println("Hello, world!")
-            }
-            ```
-            Inline code example: `val x = 10`
-            """.trimIndent())
+                                        MarkdownPreview(message.content)
                                     }
                                 }
                             }
