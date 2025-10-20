@@ -120,7 +120,7 @@ fun OverlayScreen(onClose: () -> Unit) {
                         ) {
                             if (!isTallMode) {
                                 MarkdownPreview("""
-                                ## AI Assistant
+                                ## AI-Assistant
                                 Type or use voice mode to prompt the assistant.
                                 """.trimIndent())
                             } else {
