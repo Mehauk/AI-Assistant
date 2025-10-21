@@ -32,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.mehauk.assistant.models.UniqueStringItem
+import com.mehauk.assistant.services.GeminiService
+import com.mehauk.assistant.ui._config.AppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -50,9 +52,10 @@ fun OverlayScreen(onClose: () -> Unit) {
         animationSpec = tween(300),
         label = "scrim"
     )
-    var input by remember { mutableStateOf("") }
 
     val listState = rememberLazyListState()
+
+    val geminiService = GeminiService();
 
     var chatMessages by remember { mutableStateOf(listOf<UniqueStringItem>()) }
 
@@ -98,7 +101,7 @@ fun OverlayScreen(onClose: () -> Unit) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable( // Consume clicks to prevent background click-through
+                        .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) { /* do nothing */ },
@@ -132,6 +135,10 @@ fun OverlayScreen(onClose: () -> Unit) {
                             if (recognizedText.isNotBlank()) {
                                 if (!isTallMode) isTallMode = true
                                 chatMessages = chatMessages + UniqueStringItem(recognizedText)
+                                coroutineScope.launch {
+                                    val res = geminiService.message(recognizedText)
+                                    chatMessages = chatMessages + UniqueStringItem(res)
+                                }
                             }
                         }
                     }

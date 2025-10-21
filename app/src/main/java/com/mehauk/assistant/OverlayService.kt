@@ -58,7 +58,6 @@ class OverlayService : Service(), LifecycleOwner, SavedStateRegistryOwner {
             PixelFormat.TRANSLUCENT
         )
         params.gravity = Gravity.BOTTOM
-        params.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
 
         windowManager.addView(overlayView, params)
     }

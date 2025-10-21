@@ -1,4 +1,4 @@
-package com.mehauk.assistant.ui
+package com.mehauk.assistant.ui._config
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
