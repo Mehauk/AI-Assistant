@@ -34,8 +34,10 @@ import androidx.compose.ui.unit.dp
 import com.mehauk.assistant.models.UniqueStringItem
 import com.mehauk.assistant.services.GeminiService
 import com.mehauk.assistant.ui._config.AppTheme
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun OverlayScreen(onClose: () -> Unit) {
@@ -135,9 +137,11 @@ fun OverlayScreen(onClose: () -> Unit) {
                             if (recognizedText.isNotBlank()) {
                                 if (!isTallMode) isTallMode = true
                                 chatMessages = chatMessages + UniqueStringItem(recognizedText)
-                                coroutineScope.launch {
+                                coroutineScope.launch(Dispatchers.IO) {
                                     val res = geminiService.message(recognizedText)
-                                    chatMessages = chatMessages + UniqueStringItem(res)
+                                    withContext(Dispatchers.Main) {
+                                        chatMessages = chatMessages + UniqueStringItem(res)
+                                    }
                                 }
                             }
                         }
