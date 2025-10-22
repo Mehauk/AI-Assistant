@@ -31,7 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.mehauk.assistant.models.UniqueStringItem
+import com.mehauk.assistant.models.ChatMessage
+import com.mehauk.assistant.models.ChatRole
 import com.mehauk.assistant.services.GeminiService
 import com.mehauk.assistant.ui._config.AppTheme
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +60,7 @@ fun OverlayScreen(onClose: () -> Unit) {
 
     val geminiService = GeminiService();
 
-    var chatMessages by remember { mutableStateOf(listOf<UniqueStringItem>()) }
+    var chatMessages by remember { mutableStateOf(listOf<ChatMessage>()) }
 
 
     LaunchedEffect(Unit) {
@@ -128,7 +129,29 @@ fun OverlayScreen(onClose: () -> Unit) {
                                     state = listState
                                 ) {
                                     items(chatMessages, key = { it.id }) { message ->
-                                        MarkdownPreview(message.content)
+
+                                        Box(modifier = Modifier.then(
+                                            if (message.role == ChatRole.USER) {
+                                                Modifier.align(Alignment.End)
+                                            } else {
+                                                Modifier.align(Alignment.Start)
+                                            }
+                                        ).padding(bottom = 16.dp)) {
+                                            MarkdownPreview(
+                                                message.content,
+                                                modifier = Modifier.then(
+                                                    if (message.role == ChatRole.USER) {
+                                                        Modifier
+                                                            .padding(start = 16.dp)
+                                                            .background(Color.DarkGray, RoundedCornerShape(8.dp))
+                                                    } else {
+                                                        Modifier
+                                                            .padding(end = 16.dp)
+                                                            .background(Color.DarkGray, RoundedCornerShape(8.dp))
+                                                    }
+                                                ),
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -136,11 +159,12 @@ fun OverlayScreen(onClose: () -> Unit) {
                         VoiceInputButton(modifier = Modifier.align(Alignment.CenterHorizontally)) { recognizedText ->
                             if (recognizedText.isNotBlank()) {
                                 if (!isTallMode) isTallMode = true
-                                chatMessages = chatMessages + UniqueStringItem(recognizedText)
+                                val chatMessage = ChatMessage(ChatRole.USER, recognizedText)
+                                chatMessages = chatMessages + chatMessage
                                 coroutineScope.launch(Dispatchers.IO) {
-                                    val res = geminiService.message(recognizedText)
+                                    val res = geminiService.message(chatMessage, chatMessages)
                                     withContext(Dispatchers.Main) {
-                                        chatMessages = chatMessages + UniqueStringItem(res)
+                                        chatMessages = chatMessages + res
                                     }
                                 }
                             }

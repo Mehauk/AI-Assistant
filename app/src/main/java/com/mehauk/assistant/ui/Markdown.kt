@@ -3,6 +3,7 @@ package com.mehauk.assistant.ui
 import android.content.Intent
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,18 +20,20 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MarkdownPreview(text: String) {
+fun MarkdownPreview(text: String, modifier: Modifier = Modifier) {
     val annotatedString = parseMarkdownToAnnotatedString(text)
 
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
     Text(
         text = annotatedString,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
+            .padding(all = 4.dp)
             .pointerInput(Unit) {
                 detectTapGestures { tapOffsetPosition ->
                     val layoutResult = textLayoutResult ?: return@detectTapGestures
