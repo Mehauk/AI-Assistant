@@ -3,7 +3,7 @@ package com.mehauk.assistant.models
 
 enum class ChatRole(val role: String) {
     USER("user"),
-    ASSISTANT("assistant"),
+    ASSISTANT("model"),
 }
 data class ChatMessage(
     val role: ChatRole,

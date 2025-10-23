@@ -162,9 +162,9 @@ fun OverlayScreen(onClose: () -> Unit) {
                                 val chatMessage = ChatMessage(ChatRole.USER, recognizedText)
                                 chatMessages = chatMessages + chatMessage
                                 coroutineScope.launch(Dispatchers.IO) {
-                                    val res = geminiService.message(chatMessage, chatMessages)
+                                    val res = geminiService.message(chatMessages)
                                     withContext(Dispatchers.Main) {
-                                        chatMessages = chatMessages + res
+                                        if (res != null) chatMessages = chatMessages + res
                                     }
                                 }
                             }
